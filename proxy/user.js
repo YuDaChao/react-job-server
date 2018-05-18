@@ -27,7 +27,6 @@ exports.getUserByLoginNameAndPwd = function (loginName, password, filter, callba
  * @param userName 用户名
  * @param password 密码
  * @param role 角色
- * @param avatar 头像
  * @param callback 回调函数
  */
 exports.newAndSave = function (userName, password, role, callback) {
@@ -35,5 +34,20 @@ exports.newAndSave = function (userName, password, role, callback) {
   user.userName = userName;
   user.password = md5(password);
   user.role     = role;
+  user.post     = '';
+  user.avatar   = '';
+  user.salary   = '';
+  user.info     = '';
+  user.company  = '';
   user.save(callback)
+};
+
+/**
+ * 根据用户id跟新用户信息
+ * @param id
+ * @param updateFields 需要跟新的字段
+ * @param callback 回调函数
+ */
+exports.updateById = function (id, updateFields, callback) {
+  User.findByIdAndUpdate(id, updateFields, callback)
 };

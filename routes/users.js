@@ -18,6 +18,7 @@ router.post('/login', function (req, res) {
     });
     return
   }
+  // 过滤不需要的字段
   const filter = {password: 0, "__v": 0};
   User.getUserByLoginNameAndPwd(userName, md5(password), filter, function (err, user) {
     if (!err) {
@@ -47,7 +48,7 @@ router.post('/login', function (req, res) {
  * 处理用户注册逻辑
  */
 router.post('/register', function(req, res, next) {
-  const { userName, password, repPassword, roleValue } = req.body;
+  const { userName, password, rePassword, roleValue } = req.body;
   if (!userName) {
     res.send({
       code: 1, msg: '用户名不能为空!'
@@ -60,13 +61,13 @@ router.post('/register', function(req, res, next) {
     });
     return
   }
-  if (!repPassword) {
+  if (!rePassword) {
     res.send({
       code: 1, msg: '确认密码不能为空!'
     });
     return
   }
-  if (password !== repPassword) {
+  if (password !== rePassword) {
     res.send({
       code: 1, msg: '两次密码不一致!'
     });
@@ -83,7 +84,7 @@ router.post('/register', function(req, res, next) {
         if (!err) {
           // 响应数据不携带密码
           // delete user.password;
-          const resUser = {userName, roleValue, id: user._id};
+          const resUser = {userName, role: Number(roleValue), id: user._id};
           res.send({
             code: 0,
             data: resUser
@@ -96,6 +97,36 @@ router.post('/register', function(req, res, next) {
       });
     }
   });
+});
+
+router.post('/update', function (req, res) {
+  const user = req.body;
+  const userId = req.cookies.user_id;
+  if (!userId) {
+    res.send({
+      code: 1, msg: '请先登录!'
+    })
+  } else {
+    User.updateById(userId, user, function (err, oldUser) {
+      if (!err) {
+        if (!oldUser) {
+          res.clearCookie('user_id');
+          res.send({
+            code: 1, msg: '请重新登录!'
+          })
+        } else {
+          const { userName, role, _id } = oldUser;
+          res.send({
+            code: 0, data: Object.assign({}, user, {userName, role, _id})
+          })
+        }
+      } else {
+        res.send({
+          code: 1, msg: '更新失败!'
+        })
+      }
+    })
+  }
 });
 
 module.exports = router;
