@@ -12,6 +12,33 @@ exports.getUserByLoginName = function (loginName, callback) {
 };
 
 /**
+ * 根据用户id获取用户信息
+ * @param userId 用户id
+ * @param callback 回调函数
+ */
+exports.getUserById = function (userId, filter, callback) {
+  User.findById(userId, filter, callback)
+};
+
+/**
+ * 获取所有的用户信息
+ * @param callback
+ */
+exports.getAllUsers = function (callback) {
+  User.find(callback)
+};
+
+/**
+ * 根据用户角色查询用户信息
+ * @param role 角色
+ * @param filter 过滤不需要的字段
+ * @param callback 回调函数
+ */
+exports.getUsersByRole = function (role, filter, callback) {
+  User.find(role, filter, callback)
+};
+
+/**
  * 根据用户名和密码查询用户， 不区分大小写
  * @param loginName 用户名
  * @param password 密码

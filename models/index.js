@@ -12,7 +12,9 @@ mongoose.connect('mongodb://localhost/reactJob', {
 // models
 
 require('./user');
+require('./chat');
 
 // 这里的model参数(User) 必须要和require('./user')中
 // 的 mongoose.model('User', UserSchema) User对应
 exports.User = mongoose.model('User');
+exports.Chat = mongoose.model('Chat');
